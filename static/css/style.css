@@ -1,0 +1,100 @@
+/* Custom styles for Hotel Reservation */
+
+/* Feature icons */
+.feature-icon-small {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Card hover effects */
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Room images */
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+/* Language selector */
+.dropdown-item.active {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* Footer */
+.footer {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Hero section */
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../images/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 100px 0;
+}
+
+/* Room amenities */
+.amenities-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.amenities-list li {
+    margin-bottom: 0.5rem;
+}
+
+.amenities-list i {
+    margin-right: 0.5rem;
+    color: #0d6efd;
+}
+
+/* Responsive images in room details */
+.room-gallery img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+}
+
+/* Review stars */
+.star-rating {
+    color: #ffc107;
+}
+
+/* Reservation calendar */
+.calendar-container {
+    background: white;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Profile page */
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .room-gallery img {
+        height: 200px;
+    }
+    
+    .hero-section {
+        padding: 50px 0;
+    }
+} 

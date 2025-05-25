@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ room.get_room_type_display }} - {{ room.hotel.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Room Images -->
+        <div class="col-lg-7 mb-4">
+            <div id="roomCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner rounded-4 shadow-sm">
+                    {% if room.photo %}
+                    <div class="carousel-item active">
+                        <img src="{{ room.photo.url }}" class="d-block w-100" alt="{{ room.get_room_type_display }}" style="height: 400px; object-fit: cover;">
+                    </div>
+                    {% else %}
+                    <div class="carousel-item active">
+                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 400px;">
+                            <i class="bi bi-building text-muted" style="font-size: 6rem;"></i>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Room Details -->
+        <div class="col-lg-5">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+                    <h1 class="card-title display-6 mb-2">{{ room.get_room_type_display }}</h1>
+                    <p class="text-muted mb-2">{{ room.hotel.name }}</p>
+                    <p class="text-muted mb-4">{{ room.hotel.city }}</p>
+                    
+                    <div class="price-section mb-4">
+                        <span class="fs-2 fw-bold text-primary">{{ room.price_per_night }} MAD</span>
+                        <span class="text-muted">/night</span>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    <div class="booking-section">
+                        <form method="post" action="{% url 'reservations:book_room' room.id %}" id="bookingForm">
+                            {% csrf_token %}
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-6">
+                                    <label for="check_in" class="form-label">Check-in Date</label>
+                                    <input type="date" class="form-control" id="check_in" name="check_in" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="check_out" class="form-label">Check-out Date</label>
+                                    <input type="date" class="form-control" id="check_out" name="check_out" required>
+                                </div>
+                            </div>
+
+                            <div class="amenities-section mb-4">
+                                <h5 class="mb-3">Included Amenities</h5>
+                                <div class="d-flex flex-wrap gap-2 mb-4">
+                                    {% for amenity, details in room.hotel.HOTEL_AMENITIES.items %}
+                                    {% if details.default_price == 0 %}
+                                    <span class="badge bg-light text-dark">
+                                        {% if amenity == 'Free WiFi' %}
+                                            <i class="bi bi-wifi"></i>
+                                        {% elif amenity == 'Swimming Pool' %}
+                                            <i class="bi bi-water"></i>
+                                        {% elif amenity == 'Restaurant' %}
+                                            <i class="bi bi-cup-hot"></i>
+                                        {% elif amenity == 'Spa' %}
+                                            <i class="bi bi-heart"></i>
+                                        {% elif amenity == 'Fitness Center' %}
+                                            <i class="bi bi-bicycle"></i>
+                                        {% elif amenity == 'Room Service' %}
+                                            <i class="bi bi-bell"></i>
+                                        {% elif amenity == 'Bar/Lounge' %}
+                                            <i class="bi bi-cup-straw"></i>
+                                        {% elif amenity == 'Airport Shuttle' %}
+                                            <i class="bi bi-airplane"></i>
+                                        {% elif amenity == 'Parking' %}
+                                            <i class="bi bi-p-square"></i>
+                                        {% elif amenity == 'Business Center' %}
+                                            <i class="bi bi-briefcase"></i>
+                                        {% elif amenity == 'Conference Rooms' %}
+                                            <i class="bi bi-people"></i>
+                                        {% elif amenity == 'Kids Club' %}
+                                            <i class="bi bi-emoji-smile"></i>
+                                        {% elif amenity == 'Beach Access' %}
+                                            <i class="bi bi-umbrella"></i>
+                                        {% elif amenity == 'Garden' %}
+                                            <i class="bi bi-flower1"></i>
+                                        {% elif amenity == 'Terrace' %}
+                                            <i class="bi bi-house"></i>
+                                        {% else %}
+                                            <i class="bi bi-check2"></i>
+                                        {% endif %}
+                                        {{ amenity }}
+                                    </span>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+
+                                <h5 class="mb-3">Additional Services</h5>
+                                <div class="amenities-list">
+                                    {% for amenity, details in room.hotel.HOTEL_AMENITIES.items %}
+                                    {% if details.default_price > 0 %}
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input amenity-checkbox" type="checkbox" 
+                                               name="selected_amenities" value="{{ amenity }}" 
+                                               id="amenity_{{ forloop.counter }}"
+                                               data-price="{{ details.default_price }}">
+                                        <label class="form-check-label d-flex justify-content-between" for="amenity_{{ forloop.counter }}">
+                                            <span>
+                                                {% if amenity == 'Swimming Pool' %}
+                                                    <i class="bi bi-water"></i>
+                                                {% elif amenity == 'Spa' %}
+                                                    <i class="bi bi-heart"></i>
+                                                {% elif amenity == 'Fitness Center' %}
+                                                    <i class="bi bi-bicycle"></i>
+                                                {% elif amenity == 'Airport Shuttle' %}
+                                                    <i class="bi bi-airplane"></i>
+                                                {% elif amenity == 'Parking' %}
+                                                    <i class="bi bi-p-square"></i>
+                                                {% elif amenity == 'Business Center' %}
+                                                    <i class="bi bi-briefcase"></i>
+                                                {% elif amenity == 'Conference Rooms' %}
+                                                    <i class="bi bi-people"></i>
+                                                {% elif amenity == 'Kids Club' %}
+                                                    <i class="bi bi-emoji-smile"></i>
+                                                {% else %}
+                                                    <i class="bi bi-check2"></i>
+                                                {% endif %}
+                                                {{ amenity }}
+                                            </span>
+                                            <span class="text-muted">{{ details.default_price }} MAD</span>
+                                        </label>
+                                    </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="price-summary mb-4">
+                                <h5 class="mb-3">Price Summary</h5>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Room Rate (per night)</span>
+                                    <span>{{ room.price_per_night }} MAD</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Number of Nights</span>
+                                    <span id="numberOfNights">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Room Total</span>
+                                    <span id="roomTotal">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span>Selected Services</span>
+                                    <span id="amenitiesTotal">0 MAD</span>
+                                </div>
+                                <hr>
+                                <div class="d-flex justify-content-between fw-bold">
+                                    <span>Total Price</span>
+                                    <span id="totalPrice">-</span>
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">Book Now</button>
+                            </div>
+                        </form>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        Please <a href="{% url 'account_login' %}">login</a> to book this room.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if room.reviews.exists %}
+    <div class="reviews-section mt-5">
+        <h2 class="mb-4">Guest Reviews</h2>
+        <div class="row g-4">
+            {% for review in room.reviews.all %}
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <h5 class="card-title">{{ review.user.get_full_name|default:review.user.email }}</h5>
+                            <div class="rating text-warning">
+                                {% for i in "12345"|make_list %}
+                                <i class="bi bi-star-fill {% if forloop.counter <= review.rating %}text-warning{% else %}text-light{% endif %}"></i>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="card-text">{{ review.comment }}</p>
+                        <small class="text-muted">{{ review.created_at|date:"F d, Y" }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+.carousel {
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.amenities-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.amenities-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.amenities-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.amenities-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 5px;
+}
+
+.price-summary {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.25rem 0.5rem rgba(13, 110, 253, 0.15);
+}
+
+.reviews-section .card {
+    border-radius: 1rem;
+}
+
+.rating i {
+    font-size: 0.8rem;
+}
+</style>
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkInInput = document.getElementById('check_in');
+    const checkOutInput = document.getElementById('check_out');
+    const numberOfNightsSpan = document.getElementById('numberOfNights');
+    const roomTotalSpan = document.getElementById('roomTotal');
+    const amenitiesTotal = document.getElementById('amenitiesTotal');
+    const totalPriceSpan = document.getElementById('totalPrice');
+    const roomPricePerNight = parseFloat('{{ room.price_per_night }}');
+    
+    // Set minimum dates
+    const today = new Date().toISOString().split('T')[0];
+    checkInInput.min = today;
+    checkOutInput.min = today;
+
+    function calculateNights() {
+        if (checkInInput.value && checkOutInput.value) {
+            const checkIn = new Date(checkInInput.value);
+            const checkOut = new Date(checkOutInput.value);
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            return nights > 0 ? nights : 0;
+        }
+        return 0;
+    }
+
+    function calculateAmenitiesTotal() {
+        let total = 0;
+        document.querySelectorAll('.amenity-checkbox:checked').forEach(checkbox => {
+            total += parseFloat(checkbox.dataset.price || 0);
+        });
+        return total;
+    }
+
+    function updatePriceSummary() {
+        const nights = calculateNights();
+        const roomTotal = nights * roomPricePerNight;
+        const amenitiesPrice = calculateAmenitiesTotal();
+        const total = roomTotal + amenitiesPrice;
+
+        numberOfNightsSpan.textContent = nights > 0 ? `${nights} night${nights > 1 ? 's' : ''}` : '-';
+        roomTotalSpan.textContent = nights > 0 ? `${roomTotal} MAD` : '-';
+        amenitiesTotal.textContent = `${amenitiesPrice} MAD`;
+        totalPriceSpan.textContent = nights > 0 ? `${total} MAD` : '-';
+    }
+
+    checkInInput.addEventListener('change', function() {
+        checkOutInput.min = this.value;
+        updatePriceSummary();
+    });
+
+    checkOutInput.addEventListener('change', updatePriceSummary);
+
+    document.querySelectorAll('.amenity-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updatePriceSummary);
+    });
+});
+</script>
+{% endblock %}
+{% endblock %} 

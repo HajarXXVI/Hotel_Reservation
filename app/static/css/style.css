@@ -1,0 +1,124 @@
+/* General Styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+/* Card Styles */
+.card {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Room Cards */
+.room-card {
+    height: 100%;
+}
+
+.room-card .card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.room-card .btn {
+    margin-top: auto;
+}
+
+/* Forms */
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Admin Dashboard */
+.admin-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+}
+
+.admin-card:hover {
+    background-color: #e9ecef;
+}
+
+/* Responsive Tables */
+.table-responsive {
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Status Badges */
+.badge {
+    font-size: 0.875rem;
+    padding: 0.5em 0.75em;
+}
+
+/* Modal Customization */
+.modal-content {
+    border-radius: 0.5rem;
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+/* Jumbotron Styling */
+.jumbotron {
+    background-color: #f8f9fa;
+    padding: 4rem 2rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Navigation */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Form Labels */
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .jumbotron {
+        padding: 2rem 1rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+} 

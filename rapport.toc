@@ -1,0 +1,60 @@
+\babel@toc {french}{}\relax 
+\contentsline {chapter}{\numberline {1}Introduction}{3}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Contexte du projet}{3}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Problématique}{3}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Objectifs du projet}{3}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Présentation de la solution}{4}{section.1.4}%
+\contentsline {chapter}{\numberline {2}Analyse des besoins}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Besoins fonctionnels}{5}{section.2.1}%
+\contentsline {subsection}{\numberline {2.1.1}Gestion des utilisateurs}{5}{subsection.2.1.1}%
+\contentsline {subsection}{\numberline {2.1.2}Gestion des hôtels}{5}{subsection.2.1.2}%
+\contentsline {subsection}{\numberline {2.1.3}Gestion des chambres}{5}{subsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.1.4}Gestion des réservations}{6}{subsection.2.1.4}%
+\contentsline {section}{\numberline {2.2}Besoins non-fonctionnels}{8}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Performance}{8}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Sécurité}{8}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Disponibilité}{8}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Scalabilité}{8}{subsection.2.2.4}%
+\contentsline {chapter}{\numberline {3}Conception}{9}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Architecture globale}{9}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Modèle de données}{9}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Entités principales}{9}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Relations}{11}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Interface utilisateur}{11}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Pages principales}{11}{subsection.3.3.1}%
+\contentsline {chapter}{\numberline {4}Implémentation}{12}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Environnement technique}{12}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Technologies utilisées}{12}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Dépendances principales}{12}{subsection.4.1.2}%
+\contentsline {section}{\numberline {4.2}Structure du projet}{12}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Fonctionnalités clés}{13}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Système de réservation}{13}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Gestion des hôtels}{13}{subsection.4.3.2}%
+\contentsline {chapter}{\numberline {5}Tests et validation}{15}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Méthodologie de test}{15}{section.5.1}%
+\contentsline {subsection}{\numberline {5.1.1}Tests unitaires}{15}{subsection.5.1.1}%
+\contentsline {subsection}{\numberline {5.1.2}Tests d'intégration}{15}{subsection.5.1.2}%
+\contentsline {subsection}{\numberline {5.1.3}Tests de performance}{15}{subsection.5.1.3}%
+\contentsline {chapter}{\numberline {6}Manuel d'utilisation}{16}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Guide d'installation}{16}{section.6.1}%
+\contentsline {subsection}{\numberline {6.1.1}Prérequis}{16}{subsection.6.1.1}%
+\contentsline {subsection}{\numberline {6.1.2}Étapes d'installation}{16}{subsection.6.1.2}%
+\contentsline {section}{\numberline {6.2}Guide d'utilisation}{16}{section.6.2}%
+\contentsline {subsection}{\numberline {6.2.1}Pour les clients}{16}{subsection.6.2.1}%
+\contentsline {subsection}{\numberline {6.2.2}Pour les administrateurs}{16}{subsection.6.2.2}%
+\contentsline {chapter}{\numberline {7}Bilan et perspectives}{18}{chapter.7}%
+\contentsline {section}{\numberline {7.1}Objectifs atteints}{18}{section.7.1}%
+\contentsline {section}{\numberline {7.2}Perspectives d'amélioration}{18}{section.7.2}%
+\contentsline {chapter}{\numberline {8}Conclusion}{19}{chapter.8}%
+\contentsline {section}{\numberline {8.1}Réalisations techniques}{19}{section.8.1}%
+\contentsline {section}{\numberline {8.2}Apprentissages et défis}{19}{section.8.2}%
+\contentsline {section}{\numberline {8.3}Compétences acquises}{19}{section.8.3}%
+\contentsline {section}{\numberline {8.4}Perspectives d'évolution}{20}{section.8.4}%
+\contentsline {chapter}{\numberline {9}Annexes}{24}{chapter.9}%
+\contentsline {section}{\numberline {9.1}Implementations de code significatives}{24}{section.9.1}%
+\contentsline {subsection}{\numberline {9.1.1}Modele Hotel}{24}{subsection.9.1.1}%
+\contentsline {subsection}{\numberline {9.1.2}Modele Room}{24}{subsection.9.1.2}%
+\contentsline {subsection}{\numberline {9.1.3}Modele Reservation}{25}{subsection.9.1.3}%
+\contentsline {subsection}{\numberline {9.1.4}Vue de reservation (book\_room)}{25}{subsection.9.1.4}%
+\contentsline {subsection}{\numberline {9.1.5}Vue de liste des chambres (room\_list)}{26}{subsection.9.1.5}%
+\contentsline {subsection}{\numberline {9.1.6}Formulaire d'administration Hotel (HotelAdminForm)}{26}{subsection.9.1.6}%

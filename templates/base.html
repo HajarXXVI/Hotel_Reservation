@@ -1,0 +1,428 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{% block title %}Hotel Reservation{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--dark-color);
+            line-height: 1.6;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(4px);
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1051;
+            position: relative;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem !important;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+            transform: translateY(-1px);
+        }
+
+        .nav-link i {
+            margin-right: 0.5rem;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+            z-index: 2000 !important;
+            position: absolute;
+        }
+
+        .dropdown-item {
+            padding: 0.7rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-color) !important;
+            color: var(--dark-color) !important;
+            box-shadow: none !important;
+            outline: none !important;
+            border-radius: 8px;
+            transform: translateX(5px);
+        }
+
+        .dropdown-item:focus, .dropdown-item:active {
+            background-color: var(--light-color) !important;
+            color: var(--dark-color) !important;
+            outline: none !important;
+            box-shadow: none !important;
+            border-radius: 8px;
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: 0 1.5rem;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .footer {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            margin-top: 4rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .footer span {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            padding: 0.6rem 1.2rem;
+            font-weight: 500;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        .form-control {
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+            padding: 0.75rem 1rem;
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        /* Add a semi-transparent overlay to the main content area */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ensure content is readable over the background */
+        .content-wrapper {
+            position: relative;
+            background: rgba(255,255,255,0.70);
+            border-radius: 2.5rem;
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            margin: 1.5rem 0 1.5rem 0;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 0 1.5px 6px 0 rgba(44,62,80,0.10);
+            border: 1.5px solid rgba(255,255,255,0.35);
+            backdrop-filter: blur(22px) saturate(120%);
+            -webkit-backdrop-filter: blur(22px) saturate(120%);
+            overflow: hidden;
+            transition: box-shadow 0.3s, background 0.3s;
+        }
+
+        /* Subtle pattern overlay for texture */
+        .content-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            border-radius: inherit;
+            opacity: 0.10;
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+            z-index: 1;
+        }
+
+        /* Inner shadow for depth */
+        .content-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            border-radius: inherit;
+            box-shadow: inset 0 2px 24px 0 rgba(44,62,80,0.10);
+            z-index: 2;
+        }
+
+        /* Ensure content is above overlays */
+        .content-wrapper > * {
+            position: relative;
+            z-index: 3;
+        }
+
+        /* Animated down arrow cue */
+        .scroll-down-cue {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+        .scroll-down-cue i {
+            font-size: 2.2rem;
+            color: #3498db;
+            opacity: 0.7;
+            animation: bounceDown 1.5s infinite;
+        }
+        @keyframes bounceDown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(12px); }
+        }
+
+        .scroll-up-cue {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0 0 0;
+            cursor: pointer;
+        }
+        .scroll-up-cue i {
+            font-size: 2.5rem;
+            color: #3498db;
+            opacity: 0.7;
+            transition: color 0.2s, opacity 0.2s;
+            animation: bounceUp 1.5s infinite;
+        }
+        .scroll-up-cue:hover i {
+            color: #217dbb;
+            opacity: 1;
+        }
+        @keyframes bounceUp {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .footer-contacts {
+            margin-top: 1rem;
+            gap: 1.5rem;
+        }
+        .contact-item {
+            border: 1px solid #e0e6ed;
+            background: rgba(255,255,255,0.85);
+            transition: box-shadow 0.2s, border-color 0.2s;
+        }
+        .contact-item:hover {
+            box-shadow: 0 4px 16px rgba(52, 152, 219, 0.10);
+            border-color: #3498db;
+        }
+        .footer-icon {
+            font-size: 1.2rem;
+            color: #3498db;
+        }
+        .footer-link {
+            color: #2c3e50;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-link:hover {
+            color: #217dbb;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'reservations:home' %}">
+                <i class="fas fa-hotel me-2"></i>Home
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reservations:room_list' %}">
+                            <i class="fas fa-bed"></i> Rooms
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'reservations:reservation_list' %}">
+                            <i class="fas fa-calendar-check"></i> My Reservations
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if user.is_authenticated and user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin:index' %}">
+                            <i class="fas fa-tachometer-alt"></i> Admin Dashboard
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i> {{ user.get_full_name|default:user.email }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'users:profile' %}">
+                                    <i class="fas fa-user me-2"></i> Profile
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="post" action="{% url 'account_logout' %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_login' %}">
+                            <i class="fas fa-sign-in-alt me-1"></i> Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_signup' %}">
+                            <i class="fas fa-user-plus me-1"></i> Register
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="content-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+        <div class="scroll-up-cue" onclick="window.scrollTo({top: 0, behavior: 'smooth'});" title="Back to top">
+            <i class="fas fa-chevron-up"></i>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container text-center">
+            <span>© 2025 Hotel Reservation. All rights reserved.</span>
+            <div class="footer-contacts mt-3 d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
+                <div class="contact-item px-3 py-2 rounded-3 shadow-sm bg-white bg-opacity-75 d-flex align-items-center gap-2">
+                    <span class="footer-icon text-primary"><i class="fas fa-phone-alt"></i></span>
+                    <a href="tel:+212612345678" class="footer-link">+212 6 12 34 56 78</a>
+                </div>
+                <div class="contact-item px-3 py-2 rounded-3 shadow-sm bg-white bg-opacity-75 d-flex align-items-center gap-2">
+                    <span class="footer-icon text-primary"><i class="fas fa-envelope"></i></span>
+                    <a href="mailto:contact@hotelreservation.com" class="footer-link">contact@hotelreservation.com</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    // Fix for stuck modal-backdrop and scrolling issues
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.modal').forEach(function(modal) {
+        modal.addEventListener('hidden.bs.modal', function () {
+          document.body.classList.remove('modal-open');
+          document.body.style = '';
+          document.querySelectorAll('.modal-backdrop').forEach(function(el) { el.remove(); });
+        });
+      });
+    });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

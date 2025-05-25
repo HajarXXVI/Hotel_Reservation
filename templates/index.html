@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Hotel Reservation System{% endblock %}
+
+{% block content %}
+<div class="jumbotron text-center">
+    <h1 class="display-4">Welcome to Our Hotel</h1>
+    <p class="lead">Experience luxury and comfort at its finest</p>
+    <hr class="my-4">
+    <p>Book your perfect stay with us today!</p>
+    <a class="btn btn-primary btn-lg" href="{% url 'rooms' %}" role="button">View Rooms</a>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Luxury Rooms</h5>
+                <p class="card-text">Experience our premium accommodations with top-notch amenities.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Easy Booking</h5>
+                <p class="card-text">Simple and secure online reservation system.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">24/7 Service</h5>
+                <p class="card-text">Our staff is always ready to assist you.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

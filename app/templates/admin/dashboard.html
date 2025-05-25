@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Hotel Reservation System{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Admin Dashboard</h2>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Manage Rooms</h5>
+                <p class="card-text">Add, edit, or remove hotel rooms.</p>
+                <a href="{{ url_for('admin.manage_rooms') }}" class="btn btn-primary">Go to Rooms</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Manage Reservations</h5>
+                <p class="card-text">View and manage all reservations.</p>
+                <a href="{{ url_for('admin.manage_reservations') }}" class="btn btn-primary">Go to Reservations</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Manage Users</h5>
+                <p class="card-text">View and manage user accounts.</p>
+                <a href="{{ url_for('admin.manage_users') }}" class="btn btn-primary">Go to Users</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

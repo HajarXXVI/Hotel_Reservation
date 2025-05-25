@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Book {{ room.get_room_type_display }} - {{ room.hotel.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+                    <h1 class="card-title display-6 mb-4">Book Your Stay</h1>
+                    
+                    <div class="room-info mb-4">
+                        <h5>{{ room.get_room_type_display }}</h5>
+                        <p class="text-muted mb-2">{{ room.hotel.name }} - {{ room.hotel.city }}</p>
+                        <div class="price-info">
+                            <span class="fs-4 fw-bold text-primary">{{ room.price_per_night }} MAD</span>
+                            <span class="text-muted">/night</span>
+                        </div>
+                    </div>
+
+                    <form method="post" action="{% url 'reservations:book_room' room.id %}">
+                        {% csrf_token %}
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label for="check_in" class="form-label">Check-in Date</label>
+                                <input type="date" class="form-control" id="check_in" name="check_in" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="check_out" class="form-label">Check-out Date</label>
+                                <input type="date" class="form-control" id="check_out" name="check_out" required>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Confirm Booking</button>
+                            <a href="{% url 'reservations:room_detail' room.id %}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Set minimum dates for check-in and check-out
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('check_in').min = today;
+    document.getElementById('check_out').min = today;
+
+    // Update check-out minimum date when check-in is selected
+    document.getElementById('check_in').addEventListener('change', function() {
+        document.getElementById('check_out').min = this.value;
+    });
+});
+</script>
+{% endblock %}
+{% endblock %} 

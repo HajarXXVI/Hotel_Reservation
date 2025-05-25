@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Welcome to Hotel Reservation{% endblock %}
+
+{% block content %}
+<section class="hero-section text-center py-4 mb-3" style="background: rgba(255,255,255,0.65); border-radius: 2rem; max-width: 900px; margin: 2rem auto 0 auto; box-shadow: 0 4px 24px 0 rgba(44,62,80,0.08);">
+    <h1 class="fw-bold text-body-emphasis mb-2" style="font-size:2.5rem; line-height:1.15;">Discover Morocco's Finest Stays</h1>
+    <div class="col-lg-8 mx-auto">
+        <p class="lead mb-2" style="font-size:1.15rem; color:rgba(44,62,80,0.85); font-weight:500; line-height:1.4;">
+            Unwind in luxury, wake up to breathtaking views, and experience true Moroccan hospitality.<br>
+            Find your perfect room, exclusive offers, and unforgettable moments—right here.
+        </p>
+        <div class="d-flex gap-2 justify-content-center mb-1">
+            <a href="{% url 'reservations:room_list' %}" class="btn btn-primary btn-lg px-4">
+                Browse All Rooms
+            </a>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'account_signup' %}" class="btn btn-outline-secondary btn-lg px-4">
+                Register Now
+            </a>
+            {% endif %}
+        </div>
+        <div class="scroll-down-cue mt-2">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+</section>
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <!-- Filters Sidebar -->
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Filters</h5>
+                    <form method="get" id="filterForm">
+                        <!-- City Filter -->
+                        <div class="mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <select class="form-select" name="city" id="city">
+                                <option value="">All Cities</option>
+                                {% for city_code, city_name in all_cities %}
+                                <option value="{{ city_code }}" {% if current_filters.city == city_code %}selected{% endif %}>
+                                    {{ city_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Rating Filter -->
+                        <div class="mb-3">
+                            <label for="min_rating" class="form-label">Minimum Rating</label>
+                            <select class="form-select" name="min_rating" id="min_rating">
+                                <option value="">Any Rating</option>
+                                <option value="5" {% if current_filters.min_rating == '5' %}selected{% endif %}>5 stars</option>
+                                <option value="4" {% if current_filters.min_rating == '4' %}selected{% endif %}>4+ stars</option>
+                                <option value="3" {% if current_filters.min_rating == '3' %}selected{% endif %}>3+ stars</option>
+                                <option value="2" {% if current_filters.min_rating == '2' %}selected{% endif %}>2+ stars</option>
+                            </select>
+                        </div>
+
+                        <!-- Amenities -->
+                        <div class="mb-3">
+                            <label class="form-label">Amenities</label>
+                            <div class="overflow-auto" style="max-height: 200px;">
+                                {% for amenity in all_amenities %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="amenities" value="{{ amenity }}"
+                                        id="amenity_{{ forloop.counter }}" {% if amenity in current_filters.amenities %}checked{% endif %}>
+                                    <label class="form-check-label" for="amenity_{{ forloop.counter }}">
+                                        {{ amenity }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Apply Filters</button>
+                            <a href="{% url 'reservations:home' %}" class="btn btn-outline-secondary">Clear Filters</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <!-- Sort Dropdown -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">Featured Hotels</h1>
+                <div class="d-flex gap-2">
+                    <select class="form-select" name="sort_by" form="filterForm" style="width: auto;" onchange="this.form.submit()">
+                        <option value="name_asc" {% if current_filters.sort_by == 'name_asc' %}selected{% endif %}>Name: A to Z</option>
+                        <option value="name_desc" {% if current_filters.sort_by == 'name_desc' %}selected{% endif %}>Name: Z to A</option>
+                        <option value="rating_desc" {% if current_filters.sort_by == 'rating_desc' %}selected{% endif %}>Rating: High to Low</option>
+                        <option value="rating_asc" {% if current_filters.sort_by == 'rating_asc' %}selected{% endif %}>Rating: Low to High</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Hotel Cards -->
+            <div class="row g-4">
+                {% if hotels %}
+                    {% for hotel in hotels %}
+                    <div class="col-md-6">
+                        <div class="card h-100 shadow-sm border-0 hotel-card">
+                            {% if hotel.main_photo %}
+                            <img src="{{ hotel.main_photo.url }}" class="card-img-top" alt="{{ hotel.name }}" style="height: 250px; object-fit: cover;">
+                            {% else %}
+                            <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 250px;">
+                                <i class="bi bi-building text-muted" style="font-size: 4rem;"></i>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h5 class="card-title mb-1">{{ hotel.name }}</h5>
+                                        <p class="text-muted mb-2">{{ hotel.city }}</p>
+                                    </div>
+                                    {% if hotel.rating %}
+                                    <span class="badge bg-warning text-dark">
+                                        {{ hotel.rating }} ★
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                
+                                <p class="card-text">{{ hotel.description|truncatewords:30 }}</p>
+                                
+                                <div class="amenities mb-3">
+                                    {% for amenity in hotel.amenities|slice:":5" %}
+                                    <span class="badge bg-light text-dark me-1 mb-1">{{ amenity }}</span>
+                                    {% endfor %}
+                                    {% if hotel.amenities|length > 5 %}
+                                    <span class="badge bg-light text-dark">+{{ hotel.amenities|length|add:"-5" }} more</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mt-auto">
+                                    <a href="{% url 'reservations:room_list' %}?hotel={{ hotel.id }}" class="btn btn-outline-primary w-100">
+                                        View Rooms
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="col-12 text-center">
+                    <p class="lead">No hotels available matching your criteria.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container px-4 py-5">
+    <div class="row align-items-center g-5 py-5">
+        <div class="col-lg-6">
+            <h2 class="fw-bold text-body-emphasis">Why Choose Us?</h2>
+            <p class="lead">
+                Discover the perfect blend of luxury, comfort, and Moroccan hospitality. Our hotels offer an unforgettable experience with world-class amenities and exceptional service.
+            </p>
+            <a href="{% url 'reservations:hotel_list' %}" class="btn btn-primary btn-lg px-4">
+                Explore Our Hotels
+            </a>
+        </div>
+        <div class="col-lg-6">
+            <div class="row row-cols-1 row-cols-sm-2 g-4">
+                <div class="col d-flex flex-column gap-2">
+                    <div class="feature-icon-small d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-4 rounded-3">
+                        <i class="bi bi-geo-alt"></i>
+                    </div>
+                    <h4 class="fw-semibold mb-0">Prime Locations</h4>
+                    <p class="text-body-secondary">Hotels in the heart of Morocco's finest cities</p>
+                </div>
+
+                <div class="col d-flex flex-column gap-2">
+                    <div class="feature-icon-small d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-4 rounded-3">
+                        <i class="bi bi-house-heart"></i>
+                    </div>
+                    <h4 class="fw-semibold mb-0">Luxury Experience</h4>
+                    <p class="text-body-secondary">World-class accommodations and amenities</p>
+                </div>
+
+                <div class="col d-flex flex-column gap-2">
+                    <div class="feature-icon-small d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-4 rounded-3">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                    <h4 class="fw-semibold mb-0">24/7 Service</h4>
+                    <p class="text-body-secondary">Round-the-clock customer support</p>
+                </div>
+
+                <div class="col d-flex flex-column gap-2">
+                    <div class="feature-icon-small d-inline-flex align-items-center justify-content-center text-bg-primary bg-gradient fs-4 rounded-3">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4 class="fw-semibold mb-0">Safe & Secure</h4>
+                    <p class="text-body-secondary">Enhanced safety measures</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hotel-card {
+    transition: all 0.3s ease-in-out;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.hotel-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.hotel-card .card-img-top {
+    transition: all 0.3s ease-in-out;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.feature-icon-small {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+}
+</style>
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Remove auto-submit behavior
+    const form = document.getElementById('filterForm');
+    const sortSelect = document.querySelector('select[name="sort_by"]');
+    
+    // Add sort selection to the filter form when it changes
+    if (sortSelect) {
+        sortSelect.addEventListener('change', function() {
+            // Update a hidden input in the filter form with the sort value
+            let sortInput = form.querySelector('input[name="sort_by"]');
+            if (!sortInput) {
+                sortInput = document.createElement('input');
+                sortInput.type = 'hidden';
+                sortInput.name = 'sort_by';
+                form.appendChild(sortInput);
+            }
+            sortInput.value = this.value;
+        });
+    }
+});
+</script>
+{% endblock extra_js %}
+{% endblock content %} 

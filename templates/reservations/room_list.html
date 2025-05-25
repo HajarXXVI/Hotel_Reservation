@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if hotel %}Rooms at {{ hotel.name }}{% else %}Available Rooms{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <!-- Filters Sidebar -->
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Filters</h5>
+                    <form method="get" id="filterForm">
+                        <!-- Sort Dropdown -->
+                        <div class="mb-3">
+                            <form method="get" class="mb-3" id="sortForm">
+                                <label for="sort_by" class="form-label">Sort By</label>
+                                <select class="form-select" name="sort_by" id="sort_by" onchange="this.form.submit()">
+                                    <option value="price_asc" {% if current_filters.sort_by == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                                    <option value="price_desc" {% if current_filters.sort_by == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                                    <option value="type_asc" {% if current_filters.sort_by == 'type_asc' %}selected{% endif %}>Room Type: A to Z</option>
+                                    <option value="type_desc" {% if current_filters.sort_by == 'type_desc' %}selected{% endif %}>Room Type: Z to A</option>
+                                    <option value="hotel_asc" {% if current_filters.sort_by == 'hotel_asc' %}selected{% endif %}>Hotel: A to Z</option>
+                                    <option value="hotel_desc" {% if current_filters.sort_by == 'hotel_desc' %}selected{% endif %}>Hotel: Z to A</option>
+                                </select>
+                            </form>
+                        </div>
+
+                        <!-- Hotel Filter -->
+                        <div class="mb-3">
+                            <label for="hotel" class="form-label">Hotel</label>
+                            <select class="form-select" name="hotel" id="hotel">
+                                <option value="">All Hotels</option>
+                                {% for hotel in all_hotels %}
+                                <option value="{{ hotel.id }}" 
+                                    data-city="{{ hotel.city }}"
+                                    {% if current_filters.hotel_id == hotel.id %}selected{% endif %}>
+                                    {{ hotel.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- City Filter -->
+                        <div class="mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <select class="form-select" name="city" id="city" {% if current_filters.hotel_id %}disabled{% endif %}>
+                                <option value="">All Cities</option>
+                                {% for city_code, city_name in all_cities %}
+                                <option value="{{ city_code }}" {% if current_filters.city == city_code %}selected{% endif %}>
+                                    {{ city_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Room Type Filter -->
+                        <div class="mb-3">
+                            <label for="room_type" class="form-label">Room Type</label>
+                            <select class="form-select" name="room_type" id="room_type">
+                                <option value="">All Types</option>
+                                {% for type_code, type_name in all_room_types %}
+                                <option value="{{ type_code }}" {% if current_filters.room_type == type_code %}selected{% endif %}>
+                                    {{ type_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Price Range -->
+                        <div class="mb-3">
+                            <label class="form-label">Price Range (MAD)</label>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <input type="number" class="form-control" name="min_price" placeholder="Min" value="{{ current_filters.min_price }}">
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" name="max_price" placeholder="Max" value="{{ current_filters.max_price }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hotel Amenities -->
+                        <div class="mb-3">
+                            <label class="form-label">Hotel Amenities</label>
+                            <div class="overflow-auto" style="max-height: 200px;">
+                                {% for amenity in all_amenities %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="hotel_amenities" value="{{ amenity }}"
+                                        id="amenity_{{ forloop.counter }}" {% if amenity in current_filters.hotel_amenities %}checked{% endif %}>
+                                    <label class="form-check-label" for="amenity_{{ forloop.counter }}">
+                                        {{ amenity }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                        <a href="{% url 'reservations:room_list' %}" class="btn btn-outline-secondary w-100 mt-2">Clear Filters</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h3 mb-0">Available Rooms</h1>
+            </div>
+
+            <!-- Room Cards -->
+            <div class="row g-4">
+                {% if rooms %}
+                    {% for room in rooms %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0 room-card">
+                            {% if room.photo %}
+                            <img src="{{ room.photo.url }}" class="card-img-top" alt="{{ room.get_room_type_display }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                            <div class="card-img-top d-flex align-items-center justify-content-center bg-light" style="height: 200px;">
+                                <i class="bi bi-building text-muted" style="font-size: 4rem;"></i>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h5 class="card-title mb-1">{{ room.get_room_type_display }}</h5>
+                                        {% if not hotel %}
+                                        <p class="text-muted small mb-0">{{ room.hotel.name }}</p>
+                                        <p class="text-muted small">{{ room.hotel.city }}</p>
+                                        {% endif %}
+                                    </div>
+                                    {% if room.hotel.rating %}
+                                    <span class="badge bg-warning text-dark">
+                                        {{ room.hotel.rating }} ★
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="price-info">
+                                        <span class="fs-4 fw-bold text-primary">{{ room.price_per_night }} MAD</span>
+                                        <span class="text-muted">/night</span>
+                                    </div>
+                                    <a href="{% url 'reservations:room_detail' room.id %}" class="btn btn-outline-primary">
+                                        Book Now
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="col-12 text-center">
+                    <p class="lead">No rooms available matching your criteria.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.room-card {
+    transition: all 0.3s ease-in-out;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.room-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.room-card .card-img-top {
+    transition: all 0.3s ease-in-out;
+}
+
+.feature-icon-small {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+}
+</style>
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('filterForm');
+    const hotelSelect = document.getElementById('hotel');
+    const citySelect = document.getElementById('city');
+    const sortSelect = document.getElementById('sort_by');
+    
+    // Function to update city based on selected hotel
+    function updateCity() {
+        const selectedOption = hotelSelect.options[hotelSelect.selectedIndex];
+        if (selectedOption.value) {
+            const hotelCity = selectedOption.getAttribute('data-city');
+            citySelect.value = hotelCity;
+            citySelect.disabled = true;
+        } else {
+            citySelect.disabled = false;
+            citySelect.value = ''; // Reset city when no hotel is selected
+        }
+    }
+
+    // Update city when hotel changes (without submitting)
+    hotelSelect.addEventListener('change', updateCity);
+
+    // Initialize city state on page load
+    updateCity();
+});
+</script>
+{% endblock %}
+{% endblock %} 

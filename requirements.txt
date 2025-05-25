@@ -1,0 +1,9 @@
+Django==5.0.2
+django-crispy-forms==2.1
+Pillow==10.2.0
+django-cors-headers==4.3.1
+python-dotenv==1.0.1
+django-allauth==0.61.1
+django-bootstrap5==23.4
+mysqlclient==2.2.4  # MySQL connector for Python
+PyMySQL==1.1.0  # Alternative MySQL connector 

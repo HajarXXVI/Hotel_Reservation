@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reservation Receipt{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="fw-bold mb-0">Reservation Receipt</h3>
+                        <a href="{% url 'reservations:reservation_list' %}" class="btn btn-outline-secondary">&larr; Back</a>
+                    </div>
+                    <div class="text-center mb-4">
+                        <h4>{{ reservation.room.hotel.name }}</h4>
+                        <p class="text-muted mb-0">{{ reservation.room.hotel.city }}</p>
+                    </div>
+                    <hr>
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">Room Details</h5>
+                        <p class="mb-1"><strong>Room Type:</strong> {{ reservation.room.get_room_type_display }}</p>
+                        <p class="mb-1"><strong>Room Number:</strong> {{ reservation.room.room_number }}</p>
+                        <p class="mb-1"><strong>Number of Guests:</strong> {{ reservation.number_of_guests }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">Stay Duration</h5>
+                        <p class="mb-1"><strong>Check-in:</strong> {{ reservation.check_in_date|date:"F d, Y" }}</p>
+                        <p class="mb-1"><strong>Check-out:</strong> {{ reservation.check_out_date|date:"F d, Y" }}</p>
+                        <p class="mb-1"><strong>Number of Nights:</strong> {{ reservation.calculate_number_of_days }}</p>
+                    </div>
+                    {% if reservation.selected_amenities %}
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">Selected Amenities</h5>
+                        {% for amenity in reservation.selected_amenities %}
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <span>{{ amenity }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="mb-4">
+                        <h5 class="fw-bold mb-3">Price Details</h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Room Rate (per night)</span>
+                            <span>{{ reservation.room.price_per_night }} MAD</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Number of Nights</span>
+                            <span>× {{ reservation.calculate_number_of_days }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Room Total</span>
+                            <span>{{ reservation.calculate_room_price }} MAD</span>
+                        </div>
+                        {% if reservation.amenities_total_price > 0 %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Amenities Total</span>
+                            <span>{{ reservation.amenities_total_price }} MAD</span>
+                        </div>
+                        {% endif %}
+                        <hr>
+                        <div class="d-flex justify-content-between fw-bold">
+                            <span>Total Amount</span>
+                            <span class="text-primary">{{ reservation.total_price }} MAD</span>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <span class="badge {% if reservation.status == 'confirmed' %}bg-success{% elif reservation.status == 'pending' %}bg-warning{% else %}bg-danger{% endif %} p-2">
+                            {{ reservation.get_status_display }}
+                        </span>
+                    </div>
+                    <div class="text-center mt-2">
+                        <small>Status: {{ reservation.status }} | Has review: {{ reservation.review|default:'None' }}</small>
+                    </div>
+                    {% if reservation.status == 'confirmed' or reservation.status == 'completed' %}
+                        {% if not reservation.review %}
+                        <div class="text-center mt-4">
+                            <a href="{% url 'reservations:add_review' reservation.pk %}" class="btn btn-success">
+                                Leave a Review
+                            </a>
+                        </div>
+                        {% else %}
+                        <div class="text-center mt-4">
+                            <span class="text-success">You have reviewed this reservation.</span>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Rooms - Hotel Reservation System{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Available Rooms</h2>
+
+<div class="row">
+    {% for room in rooms %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Room {{ room.number }} - {{ room.type }}</h5>
+                <p class="card-text">{{ room.description }}</p>
+                <ul class="list-unstyled">
+                    <li><strong>Price:</strong> ${{ room.price_per_night|floatformat:2 }} per night</li>
+                    <li><strong>Capacity:</strong> {{ room.capacity }} persons</li>
+                    <li><strong>Amenities:</strong> {{ room.amenities }}</li>
+                </ul>
+                {% if user.is_authenticated %}
+                <button class="btn btn-primary book-room" data-room-id="{{ room.id }}" 
+                        data-bs-toggle="modal" data-bs-target="#bookingModal">
+                    Book Now
+                </button>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn btn-primary">Login to Book</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Booking Modal -->
+<div class="modal fade" id="bookingModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Book Room</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="bookingForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="roomId" name="roomId">
+                    <div class="mb-3">
+                        <label for="checkIn" class="form-label">Check-in Date</label>
+                        <input type="date" class="form-control" id="checkIn" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="checkOut" class="form-label">Check-out Date</label>
+                        <input type="date" class="form-control" id="checkOut" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="numGuests" class="form-label">Number of Guests</label>
+                        <input type="number" class="form-control" id="numGuests" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="specialRequests" class="form-label">Special Requests</label>
+                        <textarea class="form-control" id="specialRequests" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="confirmBooking">Confirm Booking</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Leave a Review</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reviewForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="reservationId" name="reservationId">
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Rating</label>
+                        <input type="number" class="form-control" id="rating" min="1" max="5" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">Comment</label>
+                        <textarea class="form-control" id="comment" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="submitReview">Submit Review</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const bookingModal = document.getElementById('bookingModal');
+    const roomIdInput = document.getElementById('roomId');
+    const checkInInput = document.getElementById('checkIn');
+    const checkOutInput = document.getElementById('checkOut');
+    const confirmButton = document.getElementById('confirmBooking');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // Set minimum dates for check-in and check-out
+    const today = new Date().toISOString().split('T')[0];
+    checkInInput.min = today;
+    checkOutInput.min = today;
+
+    // Update check-out minimum date when check-in is selected
+    checkInInput.addEventListener('change', function() {
+        checkOutInput.min = this.value;
+    });
+
+    // Handle room selection
+    document.querySelectorAll('.book-room').forEach(button => {
+        button.addEventListener('click', function() {
+            roomIdInput.value = this.dataset.roomId;
+        });
+    });
+
+    // Handle booking confirmation
+    confirmButton.addEventListener('click', function() {
+        const formData = {
+            room_id: roomIdInput.value,
+            check_in: checkInInput.value,
+            check_out: checkOutInput.value,
+            num_guests: document.getElementById('numGuests').value,
+            special_requests: document.getElementById('specialRequests').value
+        };
+
+        // First check availability
+        fetch('{% url "check_availability" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                room_id: formData.room_id,
+                check_in: formData.check_in,
+                check_out: formData.check_out
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.available) {
+                // Proceed with booking
+                // Note: You'll need to implement the booking endpoint
+                alert('Room is available! Booking functionality to be implemented.');
+            } else {
+                alert('Sorry, the room is not available for the selected dates.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while checking availability.');
+        });
+    });
+});
+</script>
+{% endblock %} 
