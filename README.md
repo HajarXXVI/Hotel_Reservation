@@ -1,6 +1,6 @@
 # Hotel Reservation System - Morocco
 
-A modern web application for managing hotel reservations in Morocco, built with Flask and MySQL.
+A modern web application for managing hotel reservations in Morocco, built with Django and MySQL.
 
 ## Features
 
@@ -15,58 +15,58 @@ A modern web application for managing hotel reservations in Morocco, built with 
 
 ## Setup Instructions
 
-1. Create and activate a virtual environment:
+1. **Create and activate a virtual environment:**
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# On Windows:
+venv\Scripts\activate
+# On macOS/Linux:
+source venv/bin/activate
 ```
 
-2. Install dependencies:
+2. **Install dependencies:**
 ```bash
 pip install -r requirements.txt
 ```
 
-3. MySQL Database Setup:
-   - Create a new database in PHPMyAdmin named `morocco_hotel_db`
-   - Set up your MySQL user credentials
+3. **MySQL Database Setup:**
+   - Create a new database in PHPMyAdmin or MySQL named `hotel_reservation`
+   - Set up your MySQL user credentials (update `hotel_reservation/settings.py` if needed)
 
-4. Set up environment variables:
-Create a `.env` file in the root directory with:
-```
-FLASK_APP=app
-FLASK_ENV=development
-SECRET_KEY=your-secret-key
-DATABASE_URL=mysql://username:password@localhost/morocco_hotel_db
-```
+4. **Configure Django settings:**
+   - In `hotel_reservation/settings.py`, set your database credentials under `DATABASES`.
+   - Set `SECRET_KEY` and other environment-specific settings as needed.
 
-5. Initialize the database:
+5. **Apply migrations to initialize the database:**
 ```bash
-flask db init
-flask db migrate
-flask db upgrade
+python manage.py makemigrations
+python manage.py migrate
 ```
 
-6. Run the application:
+6. **Create a superuser for the admin dashboard:**
 ```bash
-flask run
+python manage.py createsuperuser
 ```
 
-The application will be available at `http://localhost:5000`
+7. **Run the development server:**
+```bash
+python manage.py runserver
+```
+
+The application will be available at `http://127.0.0.1:8000`
 
 ## Project Structure
 
 ```
 hotel_reservation/
-├── app/
-│   ├── __init__.py
-│   ├── models/
-│   ├── routes/
-│   ├── templates/
-│   └── static/
-├── migrations/
-├── venv/
-├── .env
+├── reservations/
+├── users/
+├── hotel_reservation/
+├── manage.py
 ├── requirements.txt
+├── venv/
+├── static/
+├── media/
 └── README.md
 ```
 
